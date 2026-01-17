@@ -2,6 +2,7 @@ package com.example.vacationcalculator.service;
 
 import com.example.vacationcalculator.dto.VacationPayRequest;
 import com.example.vacationcalculator.dto.VacationPayResponse;
+import com.example.vacationcalculator.exception.InvalidVacationRequestException;
 import com.example.vacationcalculator.model.HolidayCalendar;
 import org.springframework.stereotype.Service;
 
@@ -56,7 +57,7 @@ public class VacationPayService {
      * 
      * @param request vacation pay calculation request
      * @return response containing calculated vacation pay, payable days, and details
-     * @throws IllegalArgumentException if request is invalid
+     * @throws InvalidVacationRequestException if request is invalid
      */
     public VacationPayResponse calculatePay(VacationPayRequest request) {
         validateRequest(request);
@@ -152,17 +153,17 @@ public class VacationPayService {
      * Validates the request for business logic constraints.
      * 
      * @param request request to validate
-     * @throws IllegalArgumentException if request is invalid
+     * @throws InvalidVacationRequestException if request is invalid
      */
     private void validateRequest(VacationPayRequest request) {
         if (!request.isValidRequest()) {
-            throw new IllegalArgumentException(
+            throw new InvalidVacationRequestException(
                     "Either vacationDays or both startDate and endDate must be provided");
         }
 
         if (request.getStartDate() != null && request.getEndDate() != null) {
             if (request.getStartDate().isAfter(request.getEndDate())) {
-                throw new IllegalArgumentException(
+                throw new InvalidVacationRequestException(
                         "Start date must be before or equal to end date");
             }
         }
