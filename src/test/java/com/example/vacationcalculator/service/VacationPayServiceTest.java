@@ -59,8 +59,8 @@ class VacationPayServiceTest {
         VacationPayResponse response = vacationPayService.calculatePay(request);
 
         // Then
-        // Expected: 100000 / 29.3 * 28 = 3412.97 * 28 = 95563.14
-        assertThat(response.getVacationPay()).isEqualByComparingTo(new BigDecimal("95563.14"));
+        // Expected: 100000 / 29.3 = 3412.97 (rounded), then 3412.97 * 28 = 95563.16
+        assertThat(response.getVacationPay()).isEqualByComparingTo(new BigDecimal("95563.16"));
         assertThat(response.getPayableDays()).isEqualTo(28);
         assertThat(response.getCalculationDetails()).isEqualTo("Based on 28 vacation days");
     }
@@ -84,8 +84,8 @@ class VacationPayServiceTest {
         VacationPayResponse response = vacationPayService.calculatePay(request);
 
         // Then
-        // Expected: 100000 / 29.3 * 28 = 3412.97 * 28 = 95563.14
-        assertThat(response.getVacationPay()).isEqualByComparingTo(new BigDecimal("95563.14"));
+        // Expected: 100000 / 29.3 = 3412.97 (rounded), then 3412.97 * 28 = 95563.16
+        assertThat(response.getVacationPay()).isEqualByComparingTo(new BigDecimal("95563.16"));
         assertThat(response.getPayableDays()).isEqualTo(28);
         assertThat(response.getCalculationDetails())
                 .contains("Based on provided dates")
@@ -112,7 +112,7 @@ class VacationPayServiceTest {
         VacationPayResponse response = vacationPayService.calculatePay(request);
 
         // Then
-        // Expected: 100000 / 29.3 * (10 - 2) = 3412.97 * 8 = 27303.76
+        // Expected: 100000 / 29.3 = 3412.97 (rounded), then 3412.97 * 8 = 27303.76
         assertThat(response.getVacationPay()).isEqualByComparingTo(new BigDecimal("27303.76"));
         assertThat(response.getPayableDays()).isEqualTo(8); // 10 days - 2 holidays
         assertThat(response.getCalculationDetails())
@@ -198,7 +198,7 @@ class VacationPayServiceTest {
         VacationPayResponse response = vacationPayService.calculatePay(request);
 
         // Then
-        // Expected: 500000 / 29.3 * 14 = 17064.85 * 14 = 238907.90
+        // Expected: 500000 / 29.3 = 17064.85 (rounded), then 17064.85 * 14 = 238907.90
         assertThat(response.getVacationPay()).isEqualByComparingTo(new BigDecimal("238907.90"));
         assertThat(response.getPayableDays()).isEqualTo(14);
     }
@@ -319,7 +319,7 @@ class VacationPayServiceTest {
         VacationPayResponse response = vacationPayService.calculatePay(request);
 
         // Then
-        // Expected: 100000 / 29.3 * 17 = 3412.97 * 17 = 58020.49
+        // Expected: 100000 / 29.3 = 3412.97 (rounded), then 3412.97 * 17 = 58020.49
         assertThat(response.getVacationPay()).isEqualByComparingTo(new BigDecimal("58020.49"));
         assertThat(response.getPayableDays()).isEqualTo(17);
     }
