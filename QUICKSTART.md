@@ -132,7 +132,6 @@ server.port=8081
 2. **Set JAVA_HOME to Java 11 before running Maven:**
    ```bash
    export JAVA_HOME=$(/usr/libexec/java_home -v 11)
-   mvn clean compile
    ```
 
 3. **Verify you're using Java 11:**
@@ -140,6 +139,15 @@ server.port=8081
    java -version
    mvn -version
    ```
-   Both should show Java 11.
+   Both should show Java 11. If `mvn -version` shows Java 25, `JAVA_HOME` is not set correctly.
+
+4. **Then run Maven commands:**
+   ```bash
+   mvn clean compile
+   mvn test-compile
+   mvn spring-boot:run
+   ```
+
+**Note:** The `pom.xml` is configured to use Java 11 compiler explicitly for both main code and tests, but you still need to set `JAVA_HOME` so Maven can find the correct Java installation.
 
 **If Java 11 is not installed**, follow the installation instructions in the Prerequisites section above.
