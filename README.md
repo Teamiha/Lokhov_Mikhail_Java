@@ -32,11 +32,6 @@ This service provides a REST API endpoint to calculate vacation pay based on:
   - SpringDoc OpenAPI (Swagger)
   - JUnit 5 + AssertJ (testing)
 
-## Prerequisites
-
-- Java 11 or higher
-- Maven 3.6+ (optional, wrapper can be used)
-
 ## Building the Project
 
 ### Using Maven Wrapper (Recommended):
@@ -91,8 +86,6 @@ The application will start on port **8080** by default.
 
 ## Web Interface
 
-The application includes a beautiful, user-friendly web interface accessible directly in your browser!
-
 ### Access the Web Interface
 
 Simply navigate to: **http://localhost:8080/**
@@ -104,17 +97,6 @@ The web interface provides:
 - 💰 Real-time calculation results with detailed breakdown
 - 🎨 Modern, responsive design using Bootstrap 5
 - ⚠️ Clear error messages for invalid inputs
-
-**No need for Postman, Swagger, or cURL** - just open your browser and start calculating!
-
-### Features of the Web Interface
-
-- **Average Salary Input**: Enter your average monthly salary for the last 12 months
-- **Calculation Mode Selection**: 
-  - **By Days**: Simply enter the number of vacation days
-  - **By Dates**: Enter start and end dates (holidays are automatically excluded)
-- **Instant Results**: See vacation pay amount, payable days, and calculation details
-- **Error Handling**: Clear error messages for validation failures
 
 ## API Documentation
 
@@ -319,19 +301,3 @@ springdoc.api-docs.path=/api-docs
 springdoc.swagger-ui.path=/swagger-ui.html
 ```
 
-## Code Quality
-
-- Follows SOLID principles
-- Comprehensive unit tests (>90% coverage)
-- Input validation and error handling
-- Clean, readable code with meaningful naming
-- JavaDoc documentation
-- Uses BigDecimal for precise monetary calculations
-
-## License
-
-This project is licensed under the Apache License 2.0.
-
-## Author
-
-Vacation Calculator Team
