@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Калькулятор отпускных</title>
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { 
+            padding: 40px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .card { 
+            max-width: 600px; 
+            margin: auto;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            border: none;
+            padding: 20px;
+        }
+        .card-body {
+            padding: 30px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 12px;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        .form-check-input:checked {
+            background-color: #667eea;
+            border-color: #667eea;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        .alert-danger {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+<div class="card shadow-lg">
+    <div class="card-header bg-primary text-white">
+        <h3 class="mb-0">💰 Калькулятор отпускных</h3>
+        <small>Расчёт по российскому трудовому законодательству</small>
+    </div>
+    <div class="card-body">
+        <form id="calcForm">
+            <div class="mb-3">
+                <label class="form-label fw-bold">Средняя зарплата за 12 месяцев (руб.)</label>
+                <input type="number" class="form-control" id="salary" required min="0.01" step="0.01" placeholder="Введите сумму">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Вариант расчёта</label><br>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="mode" id="modeDays" value="days" checked>
+                    <label class="form-check-label" for="modeDays">По количеству дней</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="mode" id="modeDates" value="dates">
+                    <label class="form-check-label" for="modeDates">По датам отпуска</label>
+                </div>
+            </div>
+
+            <div id="daysBlock">
+                <div class="mb-3">
+                    <label class="form-label">Количество дней отпуска</label>
+                    <input type="number" class="form-control" id="vacationDays" min="1" placeholder="Например: 28">
+                </div>
+            </div>
+
+            <div id="datesBlock" style="display: none;">
+                <div class="mb-3">
+                    <label class="form-label">Дата начала отпуска</label>
+                    <input type="date" class="form-control" id="startDate">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Дата окончания отпуска</label>
+                    <input type="date" class="form-control" id="endDate">
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Рассчитать</button>
+        </form>
+
+        <div id="result" class="mt-4" style="display: none;">
+            <div class="alert alert-success">
+                <h5 class="mb-3">✅ Результат расчёта:</h5>
+                <p class="mb-2"><strong>Сумма отпускных:</strong> <span id="payAmount" class="fs-5 text-primary"></span> руб.</p>
+                <p class="mb-2"><strong>Оплачиваемых дней:</strong> <span id="payDays" class="fw-bold"></span></p>
+                <p class="mb-0"><strong>Детали:</strong> <span id="details"></span></p>
+            </div>
+        </div>
+
+        <div id="error" class="mt-4" style="display: none;">
+            <div class="alert alert-danger" id="errorMessage"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Переключение блоков
+    document.querySelectorAll('input[name="mode"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+            document.getElementById('daysBlock').style.display = radio.value === 'days' ? 'block' : 'none';
+            document.getElementById('datesBlock').style.display = radio.value === 'dates' ? 'block' : 'none';
+            // Очистка полей при переключении
+            if (radio.value === 'days') {
+                document.getElementById('startDate').value = '';
+                document.getElementById('endDate').value = '';
+            } else {
+                document.getElementById('vacationDays').value = '';
+            }
+        });
+    });
+
+    // Отправка формы
+    document.getElementById('calcForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        document.getElementById('result').style.display = 'none';
+        document.getElementById('error').style.display = 'none';
+
+        const salary = parseFloat(document.getElementById('salary').value);
+        if (!salary || salary <= 0) {
+            showError('Введите корректную зарплату (больше 0)');
+            return;
+        }
+
+        let url = `/calculate?averageSalary=${salary}`;
+
+        if (document.getElementById('modeDays').checked) {
+            const days = parseInt(document.getElementById('vacationDays').value);
+            if (!days || days < 1) {
+                showError('Введите количество дней (минимум 1)');
+                return;
+            }
+            url += `&vacationDays=${days}`;
+        } else {
+            const start = document.getElementById('startDate').value;
+            const end = document.getElementById('endDate').value;
+            if (!start || !end) {
+                showError('Введите обе даты');
+                return;
+            }
+            if (start > end) {
+                showError('Дата начала должна быть раньше даты окончания');
+                return;
+            }
+            url += `&startDate=${start}&endDate=${end}`;
+        }
+
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            
+            if (!response.ok) {
+                // Обработка ошибок валидации
+                if (data.errors) {
+                    const errorMessages = Object.values(data.errors).join(', ');
+                    throw new Error(errorMessages);
+                }
+                throw new Error(data.message || 'Ошибка сервера');
+            }
+            
+            // Отображение результата
+            document.getElementById('payAmount').textContent = 
+                Number(data.vacationPay).toLocaleString('ru-RU', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+            document.getElementById('payDays').textContent = data.payableDays;
+            document.getElementById('details').textContent = data.calculationDetails;
+            document.getElementById('result').style.display = 'block';
+            
+            // Прокрутка к результату
+            document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } catch (err) {
+            showError(err.message || 'Неизвестная ошибка');
+        }
+    });
+
+    function showError(message) {
+        document.getElementById('errorMessage').textContent = message;
+        document.getElementById('error').style.display = 'block';
+        document.getElementById('error').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // Установка минимальной даты на сегодня для полей дат
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('startDate').setAttribute('min', today);
+    document.getElementById('endDate').setAttribute('min', today);
+</script>
+</body>
+</html>

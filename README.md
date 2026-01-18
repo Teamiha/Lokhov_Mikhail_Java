@@ -12,6 +12,7 @@ This service provides a REST API endpoint to calculate vacation pay based on:
 ## Features
 
 - ✅ RESTful API with single GET endpoint
+- ✅ **Web interface** - Beautiful, user-friendly HTML form (no Postman needed!)
 - ✅ Automatic holiday exclusion when using date ranges
 - ✅ Comprehensive input validation
 - ✅ Detailed error handling with meaningful error messages
@@ -38,25 +39,82 @@ This service provides a REST API endpoint to calculate vacation pay based on:
 
 ## Building the Project
 
+### Using Maven Wrapper (Recommended):
+
+```bash
+./mvnw clean install
+```
+
+On Windows:
+```bash
+mvnw.cmd clean install
+```
+
+### Using Maven (if installed):
+
 ```bash
 mvn clean install
 ```
 
 ## Running the Application
 
-### Using Maven:
+### Using Maven Wrapper (Recommended - No Maven installation needed):
+
+```bash
+./mvnw spring-boot:run
+```
+
+On Windows:
+```bash
+mvnw.cmd spring-boot:run
+```
+
+### Using Maven (if installed):
 
 ```bash
 mvn spring-boot:run
 ```
 
-### Using Java:
+### Using Java (after building):
 
+First build the project:
+```bash
+./mvnw clean package
+```
+
+Then run:
 ```bash
 java -jar target/vacation-calculator-1.0.0.jar
 ```
 
 The application will start on port **8080** by default.
+
+## Web Interface
+
+The application includes a beautiful, user-friendly web interface accessible directly in your browser!
+
+### Access the Web Interface
+
+Simply navigate to: **http://localhost:8080/**
+
+The web interface provides:
+- 📝 Intuitive form for entering calculation parameters
+- 🔄 Toggle between "by vacation days" or "by date range" calculation modes
+- ✅ Frontend validation for better user experience
+- 💰 Real-time calculation results with detailed breakdown
+- 🎨 Modern, responsive design using Bootstrap 5
+- ⚠️ Clear error messages for invalid inputs
+
+**No need for Postman, Swagger, or cURL** - just open your browser and start calculating!
+
+### Features of the Web Interface
+
+- **Average Salary Input**: Enter your average monthly salary for the last 12 months
+- **Calculation Mode Selection**: 
+  - **By Days**: Simply enter the number of vacation days
+  - **By Dates**: Enter start and end dates (holidays are automatically excluded)
+- **Instant Results**: See vacation pay amount, payable days, and calculation details
+- **Error Handling**: Clear error messages for validation failures
 
 ## API Documentation
 
@@ -194,6 +252,19 @@ The API returns meaningful error messages in JSON format:
 
 ## Running Tests
 
+### Using Maven Wrapper:
+
+```bash
+./mvnw test
+```
+
+On Windows:
+```bash
+mvnw.cmd test
+```
+
+### Using Maven (if installed):
+
 ```bash
 mvn test
 ```
@@ -201,7 +272,7 @@ mvn test
 To run tests with coverage report:
 
 ```bash
-mvn test jacoco:report
+./mvnw test jacoco:report
 ```
 
 ## Project Structure
