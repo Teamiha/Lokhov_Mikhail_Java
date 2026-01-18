@@ -3,6 +3,8 @@ package com.example.vacationcalculator.dto;
 import lombok.Builder;
 import lombok.Value;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
@@ -41,6 +43,7 @@ public class VacationPayRequest {
      * Vacation start date (format: YYYY-MM-DD).
      * Must be provided together with endDate if vacationDays is not provided.
      */
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     LocalDate startDate;
 
     /**
@@ -48,6 +51,7 @@ public class VacationPayRequest {
      * Must be provided together with startDate if vacationDays is not provided.
      * Must be equal to or after startDate.
      */
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     LocalDate endDate;
 
     /**

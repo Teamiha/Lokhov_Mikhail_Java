@@ -6,10 +6,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -130,6 +132,47 @@ public class GlobalExceptionHandler {
                 .stream()
                 .map(ConstraintViolation::getMessage)
                 .collect(Collectors.joining(", "));
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message(message)
+                .timestamp(LocalDateTime.now())
+                .path(getPath(request))
+                .build();
+
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    /**
+     * Handles TypeMismatchException - type conversion errors (e.g., invalid date format).
+     * 
+     * @param ex the exception
+     * @param request the web request
+     * @return error response with BAD_REQUEST status
+     */
+    @ExceptionHandler({TypeMismatchException.class, MethodArgumentTypeMismatchException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorResponse> handleTypeMismatch(
+            Exception ex, WebRequest request) {
+        
+        log.warn("Type mismatch error: {}", ex.getMessage());
+
+        String message = "Invalid parameter format. ";
+        if (ex instanceof MethodArgumentTypeMismatchException) {
+            MethodArgumentTypeMismatchException mismatchEx = (MethodArgumentTypeMismatchException) ex;
+            String paramName = mismatchEx.getName();
+            String requiredType = mismatchEx.getRequiredType() != null 
+                    ? mismatchEx.getRequiredType().getSimpleName() 
+                    : "unknown";
+            
+            if (requiredType.contains("LocalDate")) {
+                message += String.format("Parameter '%s' must be a valid date in YYYY-MM-DD format", paramName);
+            } else {
+                message += String.format("Parameter '%s' must be of type %s", paramName, requiredType);
+            }
+        } else {
+            message += ex.getMessage();
+        }
 
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .status(HttpStatus.BAD_REQUEST.value())

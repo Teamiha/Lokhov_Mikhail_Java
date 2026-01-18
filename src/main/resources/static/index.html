@@ -179,7 +179,9 @@
                     const errorMessages = Object.values(data.errors).join(', ');
                     throw new Error(errorMessages);
                 }
-                throw new Error(data.message || 'Ошибка сервера');
+                // Обработка ошибок преобразования типов и других ошибок
+                const errorMessage = data.message || 'Ошибка сервера';
+                throw new Error(errorMessage);
             }
             
             // Отображение результата
