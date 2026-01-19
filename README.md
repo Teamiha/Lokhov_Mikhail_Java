@@ -1,3 +1,8 @@
+# Deployed to Koyeb
+
+https://isolated-faina-petwork-5144e867.koyeb.app/
+
+
 # Vacation Pay Calculator
 
 A Spring Boot microservice for calculating vacation pay according to Russian labor law conventions.
